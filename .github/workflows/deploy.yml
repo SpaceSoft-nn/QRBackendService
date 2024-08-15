@@ -8,7 +8,7 @@ on:
 
 jobs:
   build-and-deploy:
-    runs-on: ubuntu-22.04
+    runs-on: debian-latest
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
@@ -38,7 +38,7 @@ jobs:
         username: ${{ secrets.USER }}
         key: ${{ secrets.DEPLOY_KEY }}
         script: |
-          docker load < /tmp/qr-backend-service.tar
-          docker stop qr-backend-service || true
-          docker rm qr-backend-service || true
-          docker run --name qr-backend-service -d -p 80:80 qr-backend-service
+          sudo docker load < /tmp/qr-backend-service.tar
+          sudo docker stop qr-backend-service || true
+          sudo docker rm qr-backend-service || true
+          sudo docker run --name qr-backend-service -d -p 80:80 qr-backend-service
