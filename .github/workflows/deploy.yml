@@ -1,0 +1,44 @@
+name: deploy
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-22.04
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Build image
+      run: |
+        docker build -t qr-backend-service .
+        
+    - name: Save image to file
+      run: |
+        docker save -o qr-backend-service.tar qr-backend-service
+        chmod 664 qr-backend-service.tar
+
+    - name: Copy image to server
+      uses: appleboy/scp-action@master
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USER }}
+        key: ${{ secrets.DEPLOY_KEY }}
+        source: "qr-backend-service.tar"
+        target: "/tmp"
+
+    - name: Deploy to remote server
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USER }}
+        key: ${{ secrets.DEPLOY_KEY }}
+        script: |
+          docker load < /tmp/qr-backend-service.tar
+          docker stop qr-backend-service || true
+          docker rm qr-backend-service || true
+          docker run --name qr-backend-service -d -p 80:80 qr-backend-service
