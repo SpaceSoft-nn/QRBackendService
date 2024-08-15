@@ -8,7 +8,7 @@ on:
 
 jobs:
   build-and-deploy:
-    runs-on: debian-latest
+    runs-on: ubuntu-22.01
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
