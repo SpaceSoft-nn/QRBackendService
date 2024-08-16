@@ -129,6 +129,10 @@ COPY docker/prod/script/wait-for-it.sh /usr/local/bin/wait-for-it.sh
     #подготовка к запуску супервайзера
 COPY docker/prod/script/start_worker.sh /usr/local/bin/start_worker.sh
 
+# Делаем скрипт executables
+RUN chmod +x /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/wait-for-it.sh
+RUN chmod +x /usr/local/bin/start_worker.sh
 
 # Задайте скрипт точки входа
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
